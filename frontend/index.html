@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DevOps E-Commerce</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        .item { border: 1px solid #ccc; padding: 10px; margin: 10px 0; border-radius: 5px;}
+    </style>
+</head>
+<body>
+    <h1>Welcome to the DevOps Store</h1>
+    <div id="product-list">Loading products...</div>
+
+    <script>
+        fetch('http://localhost:5000/products')
+            .then(response => response.json())
+            .then(data => {
+                const list = document.getElementById('product-list');
+                list.innerHTML = data.map(p => 
+                    `<div class="item"><strong>${p.name}</strong> - $${p.price}</div>`
+                ).join('');
+            })
+            .catch(err => console.error('Error:', err));
+    </script>
+</body>
+</html>

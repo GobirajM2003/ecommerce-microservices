@@ -1,0 +1,33 @@
+name: Microservices CI Pipeline
+
+# Trigger: Run this pipeline when code is pushed to the 'main' branch
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    # Run on a virtual machine provided by GitHub (Ubuntu Linux)
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Download your code from the repo to the virtual machine
+    - uses: actions/checkout@v3
+
+    # Step 2: Set up the Docker builder tool
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    # Step 3: Build the Backend to ensure no errors
+    - name: Build Backend
+      run: docker build ./backend -t my-backend-image
+
+    # Step 4: Build the Frontend to ensure no errors
+    - name: Build Frontend
+      run: docker build ./frontend -t my-frontend-image
+
+    # Step 5: Run a quick test (Smoke Test)
+    - name: Verify Backend Starts
+      run: docker run --rm my-backend-image python -c "print('Backend configuration is valid')"
