@@ -1,0 +1,30 @@
+name: Website Health Check
+
+# Run this check every 15 minutes
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  # Also run it manually if you want to test it now
+  workflow_dispatch:
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Website Status
+        env:
+          URL: "https://ecommerce-frontend-9j4w.onrender.com" 
+        run: |
+          echo "Checking if $URL is online..."
+          # -f fails if the HTTP code is 400+
+          # -s is silent
+          # -L follows redirects
+          curl -f -s -L $URL > /dev/null
+          
+      - name: Success Message
+        if: success()
+        run: echo "Website is UP and running!"
+
+      - name: Failure Message
+        if: failure()
+        run: 'echo "ALERT: Website is DOWN!"'
